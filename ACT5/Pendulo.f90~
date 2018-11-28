@@ -1,0 +1,30 @@
+PROGRAM PENDULO
+  IMPLICIT NONE
+
+  REAL,PARAMETER :: a = 1.0, b = 2.0, x = -4.0
+  REAL :: h, t, f
+  INTEGER;PARAMETER :: n = 100
+  INTEGER :: k
+
+    h = (b-a)/real(n)
+    t = a
+
+  PRINT*, t, x
+
+  DO k = 1, n
+
+     x = x + h*f(t,x)
+     t = t + h
+
+     PRINT*, 'Estos son k, t, x: ', k, t, x
+
+  END DO
+
+  FUNCTION f(t,x)
+    REAL,INTENT(IN) :: x, t
+    f = 1.0 + x*x + t**3
+  END FUNCTION f
+
+END PROGRAM PENDULO
+
+  
