@@ -1,0 +1,20 @@
+Program NewtonRap
+
+  Implicit none
+
+  REAL:: x,x1,error,f,f1
+
+  WRITE(*,*)'Ingresa un punto cerca de la raiz'
+  READ(*,*) x
+
+  DO
+     f=x**3-x-2
+     f1=3*x**2-1
+
+  end do
+
+  real function f(X)
+    real::x
+    f(x)=x**2+1
+    
+     
