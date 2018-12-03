@@ -1,0 +1,409 @@
+Program Pendulo
+IMPLICIT NONE
+Real :: l, a, b, h, n_n, m, Ang_0, Ang_1, Ang_2, Ang_3, Ang_4
+!Auxiliares de runge kutta de 4do orden
+Real :: k1, k2, k3, k4, l1, l2, l3, l4
+Real :: aux, aux1, aux2, aux3, aux4
+!Vectores sin dimension
+Real, allocatable :: t(:), X(:), Y(:), W(:), Teta(:), Ang(:)
+Integer :: i, n
+real, external :: func
+
+!Ingresamos constantes y valores iniciales
+Print*, "¿Se soltará desde los siguintes angulos: 15, 30, 45, 60 y 75 grados"
+Ang_0= (3.1416*15)/180
+Ang_1= (3.1416*30)/180
+Ang_2= (3.1416*45)/180
+Ang_3= (3.1416*60)/180
+Ang_4= (3.1416*75)/180
+
+Print*, "Necesito que me digas la longitud que tiene la cuerda"
+Read*, l
+Print*, "Dame tambien la masa de tu objeto colgante(Para calcular energias)"
+Read*, m
+
+Print*, "Para sacarlos necesito que me digas el intervalo de tiempo en segundos[t0,tn] que deseas"
+Print*, "Escribelo a continuacion"
+Read*, a , b
+
+Print*, "Necesito que me digas el ancho de paso"
+Read*, h
+
+!SE calcula el numero de particiones
+n_n=(b-a)/h
+!se toma un numero entero de particiones
+n=NINT(n_n)
+
+!Se le da dimension a los vectores
+
+!Valores del angulo(radianes)
+Allocate(Teta(n))
+!Valores del angulo(grados)
+Allocate(Ang(n))
+!Valores del tiempo
+Allocate(t(n))
+!Valores de la posicion en X
+Allocate(X(n))
+!Valores de la posicion en Y
+Allocate(Y(n))
+!Valores de la velocidad angular
+Allocate(W(n))
+
+
+Print*, "Gracias!"
+
+!Ponemos valores iniciales en los arreglos
+
+
+!PRIMERO
+Teta(1)=Ang_0
+Ang(1)=15
+
+t(1)=a
+
+X(1)=l*(Sin(Teta(1)))
+Y(1)=-l*(Cos(Teta(1)))
+W(1)=0
+
+
+!!!!
+Do i=2,n
+
+!Primer pendiente
+k1= h*W(i-1)
+l1= h*func(Teta(i-1),l)
+
+!Segunda pendiente
+aux2= Teta(i-1)+(k1/2)
+k2= h*(W(i-1)+(l1/2))
+l2= h*func(aux2,l)
+
+!tercer pendiente
+aux3= Teta(i-1)+(k2/2)
+k3= h*(W(i-1)+(l2/2))
+l3= h*func(aux3,l)
+
+!cuarta pendiente
+aux4= Teta(i-1)+k3
+k4= h*(W(i-1)+l3)
+l4= h*func(aux4,l)
+
+l1!hacemos una suma para teta
+Aux= k1+(2*k2)+(2*k3)+k4
+!hacemos una suma para la rapidez angular
+Aux1= l1+(2*l2)+(2*l3)+l4
+
+!Calculamos las nuevas rapidez y angulo
+W(i)= W(i-1) + (aux1/6)
+Teta(i)= Teta(i-1) + (aux/6)
+Ang(i) = Teta(i)*(180/3.1416)
+!aux/6 es el promedio de las pendientes
+
+!Calculamos posicion
+X(i)=l*(Sin(Teta(i)))
+Y(i)=-l*(Cos(Teta(i)))
+
+
+!Calcula paso del tiempo
+t(i)=a+(h*(i-1))
+
+End do
+
+!Escribe los datos
+Open(1, file="15-t-w")
+Do i=1,n
+Write(1,*) t(i), W(i)
+End do
+Close(1)
+
+
+Open(3,file="15-movimiento")
+Do i=1,n
+Write(3,*)t(i), X(i), Y(i), Teta(i), Ang(i)
+End do
+Close (3)
+
+
+!segundo
+Teta(1)=Ang_1
+Ang(1)=30
+
+t(1)=a
+
+X(1)=l*(Sin(Teta(1)))
+Y(1)=-l*(Cos(Teta(1)))
+W(1)=0
+
+
+!!!!
+Do i=2,n
+
+!Primer pendiente
+k1= h*W(i-1)
+l1= h*func(Teta(i-1),l)
+
+!Segunda pendiente
+aux2= Teta(i-1)+(k1/2)
+k2= h*(W(i-1)+(l1/2))
+l2= h*func(aux2,l)
+
+!tercer pendiente
+aux3= Teta(i-1)+(k2/2)
+k3= h*(W(i-1)+(l2/2))
+l3= h*func(aux3,l)
+
+!cuarta pendiente
+aux4= Teta(i-1)+k3
+k4= h*(W(i-1)+l3)
+l4= h*func(aux4,l)
+
+!hacemos una suma para teta
+Aux= k1+(2*k2)+(2*k3)+k4
+!hacemos una suma para la rapidez angular
+Aux1= l1+(2*l2)+(2*l3)+l4
+
+!Calculamos las nuevas rapidez y angulo
+W(i)= W(i-1) + (aux1/6)
+Teta(i)= Teta(i-1) + (aux/6)
+Ang(i) = Teta(i)*(180/3.1416)
+!aux/6 es el promedio de las pendientes
+
+!Calculamos posicion
+X(i)=l*(Sin(Teta(i)))
+Y(i)=-l*(Cos(Teta(i)))
+
+
+!Calcula paso del tiempo
+t(i)=a+(h*(i-1))
+
+End do
+
+!Escribe los datos
+Open(1, file="30-t-w")
+Do i=1,n
+Write(1,*) t(i), W(i)
+End do
+Close(1)
+
+
+Open(3,file="30-movimiento")
+Do i=1,n
+Write(3,*) t(i), X(i), Y(i), Teta(i), Ang(i)
+End do
+Close (3)
+
+!tercero
+Teta(1)=Ang_2
+Ang(1)= 45
+
+t(1)=a
+
+X(1)=l*(Sin(Teta(1)))
+Y(1)=-l*(Cos(Teta(1)))
+W(1)=0
+
+
+!!!!
+Do i=2,n
+
+!Primer pendiente
+k1= h*W(i-1)
+l1= h*func(Teta(i-1),l)
+
+!Segunda pendiente
+aux2= Teta(i-1)+(k1/2)
+k2= h*(W(i-1)+(l1/2))
+l2= h*func(aux2,l)
+
+!tercer pendiente
+aux3= Teta(i-1)+(k2/2)
+k3= h*(W(i-1)+(l2/2))
+l3= h*func(aux3,l)
+
+!cuarta pendiente
+aux4= Teta(i-1)+k3
+k4= h*(W(i-1)+l3)
+l4= h*func(aux4,l)
+
+!hacemos una suma para teta
+Aux= k1+(2*k2)+(2*k3)+k4
+!hacemos una suma para la rapidez angular
+Aux1= l1+(2*l2)+(2*l3)+l4
+
+!Calculamos las nuevas rapidez y angulo
+W(i)= W(i-1) + (aux1/6)
+Teta(i)= Teta(i-1) + (aux/6)
+Ang(i) = Teta(i)*(180/3.1416)
+!aux/6 es el promedio de las pendientes
+
+!Calculamos posicion
+X(i)=l*(Sin(Teta(i)))
+Y(i)=-l*(Cos(Teta(i)))
+
+
+!Calcula paso del tiempo
+t(i)=a+(h*(i-1))
+
+End do
+
+!Escribe los datos
+Open(1, file="45-t-w")
+Do i=1,n
+Write(1,*) t(i), W(i)
+End do
+Close(1)
+
+
+Open(3,file="45-movimiento")
+Do i=1,n
+Write(3,*) t(i), X(i), Y(i), Teta(i), Ang(i)
+End do
+Close (3)
+
+!CUARTO
+Teta(1)=Ang_3
+Ang(1)=60
+
+t(1)=a
+
+X(1)=l*(Sin(Teta(1)))
+Y(1)=-l*(Cos(Teta(1)))
+W(1)=0
+
+
+!!!!
+Do i=2,n
+
+!Primer pendiente
+k1= h*W(i-1)
+l1= h*func(Teta(i-1),l)
+
+!Segunda pendiente
+aux2= Teta(i-1)+(k1/2)
+k2= h*(W(i-1)+(l1/2))
+l2= h*func(aux2,l)
+
+!tercer pendiente
+aux3= Teta(i-1)+(k2/2)
+k3= h*(W(i-1)+(l2/2))
+l3= h*func(aux3,l)
+
+!cuarta pendiente
+aux4= Teta(i-1)+k3
+k4= h*(W(i-1)+l3)
+l4= h*func(aux4,l)
+
+!hacemos una suma para teta
+Aux= k1+(2*k2)+(2*k3)+k4
+!hacemos una suma para la rapidez angular
+Aux1= l1+(2*l2)+(2*l3)+l4
+
+!Calculamos las nuevas rapidez y angulo
+W(i)= W(i-1) + (aux1/6)
+Teta(i)= Teta(i-1) + (aux/6)
+Ang(i) = Teta(i)*(180/3.1416)
+!aux/6 es el promedio de las pendientes
+
+!Calculamos posicion
+X(i)=l*(Sin(Teta(i)))
+Y(i)=-l*(Cos(Teta(i)))
+
+
+!Calcula paso del tiempo
+t(i)=a+(h*(i-1))
+
+End do
+
+!Escribe los datos
+Open(1, file="60-t-w")
+Do i=1,n
+Write(1,*) t(i), W(i)
+End do
+Close(1)
+
+
+Open(3,file="60-movimiento")
+Do i=1,n
+Write(3,*) t(i), X(i), Y(i), Teta(i), Ang(i)
+End do
+Close (3)
+
+Teta(1)=Ang_4
+Ang(1)=75
+
+t(1)=a
+
+X(1)=l*(Sin(Teta(1)))
+Y(1)=-l*(Cos(Teta(1)))
+W(1)=0
+
+
+!!!!
+Do i=2,n
+
+!Primer pendiente
+k1= h*W(i-1)
+l1= h*func(Teta(i-1),l)
+
+!Segunda pendiente
+aux2= Teta(i-1)+(k1/2)
+k2= h*(W(i-1)+(l1/2))
+l2= h*func(aux2,l)
+
+!tercer pendiente
+aux3= Teta(i-1)+(k2/2)
+k3= h*(W(i-1)+(l2/2))
+l3= h*func(aux3,l)
+
+!cuarta pendiente
+aux4= Teta(i-1)+k3
+k4= h*(W(i-1)+l3)
+l4= h*func(aux4,l)
+
+!hacemos una suma para teta
+Aux= k1+(2*k2)+(2*k3)+k4
+!hacemos una suma para la rapidez angular
+Aux1= l1+(2*l2)+(2*l3)+l4
+
+!Calculamos las nuevas rapidez y angulo
+W(i)= W(i-1) + (aux1/6)
+Teta(i)= Teta(i-1) + (aux/6)
+Ang(i) = Teta(i)*(180/3.1416)
+!aux/6 es el promedio de las pendientes
+
+!Calculamos posicion
+X(i)=l*(Sin(Teta(i)))
+Y(i)=-l*(Cos(Teta(i)))
+
+
+!Calcula paso del tiempo
+t(i)=a+(h*(i-1))
+
+End do
+
+!Escribe los datos
+Open(1, file="75-t-w")
+Do i=1,n
+Write(1,*) t(i), W(i)
+End do
+Close(1)
+
+
+Open(3,file="75-movimiento")
+Do i=1,n
+Write(3,*) t(i), X(i), Y(i), Teta(i), Ang(i)
+End do
+Close (3)
+
+
+End program Pendulo
+
+Function func(Teta,l)
+implicit none
+Real :: Teta, func, l
+
+!Esta funcion se usa con angulos grandes
+func=(-9.81/l)*(Sin(Teta))
+
+
+End function
